@@ -26,6 +26,7 @@ int lanzamiento_pc();                                                          /
 int repitio_disparo(char (*tablero_ataque)[10][5], int j, int i, int jugador); // Función para determinar si el disparo ya fue hecho.
 int exportar_registro();                                                       // Función para exportar el registro de un juego a un archivo.
 
+int pc_escoge_pais();
 int iniciar_tableros();
 int barcos_alrededos(int j, int i, int tipo, int jugador);
 int cargar_tableros();
@@ -56,10 +57,10 @@ int ctoi(char n);
 char tablero_ataque1[10][10][5], tablero_ataque2[10][10][5], ult_celda1[4], pais1[20];
 char tablero_flota1[10][10][5], tablero_flota2[10][10][5], ult_celda2[4], pais2[20];
 const char barcos[5][15] = {"Destructor", "Submarino", "Crucero", "Acorazado", "Portaaviones"};
-const char paises[23][20] = {"Australia", "Canadá", "Chile", "China", "Colombia",
-                             "Corea del Sur", "Estados Unidos", "Filipinas", "Francia", "India", "Indonesia", "Japón",
-                             "Malasia", "México", "Noruega", "Nueva Zelanda", "Paises Bajos", "Peru", "Reino Unido",
-                             "Rusia", "Singapur", "Tailandia", "Tonga"};
+char paises[23][20] = {"Australia", "Canada", "Chile", "China", "Colombia",
+                       "Corea del Sur", "Estados Unidos", "Filipinas", "Francia", "India", "Indonesia", "Japon",
+                       "Malasia", "Mexico", "Noruega", "Nueva Zelanda", "Paises Bajos", "Peru", "Reino Unido",
+                       "Rusia", "Singapur", "Tailandia", "Tonga"};
 int numero_de_jugadores;
 int n_barcos1, n_disparos1;
 int n_barcos2, n_disparos2;
@@ -272,6 +273,7 @@ int ubicar_caracter(char *string_, char caracter)
 {
     int i = 0;
     int k = 0;
+
     while (!(string_[i] == caracter))
     {
         i++;
@@ -285,7 +287,6 @@ int ubicar_caracter(char *string_, char caracter)
 **/
 int exportar_registro()
 {
-    
 }
 
 /*
@@ -364,6 +365,11 @@ int posicionar_barcos(int n_jugadores)
     {
         limpiar();
         mostrar_preparado_jugador(jugador);
+        limpiar();
+        if (jugador == 1)
+            escoger_pais(pais1);
+        else if (numero_de_jugadores == 2)
+            escoger_pais(pais2);
 
         for (int i = 0; i < 5; i++)
         {
@@ -371,14 +377,14 @@ int posicionar_barcos(int n_jugadores)
 
             if (jugador == 1)
             {
-                escoger_pais(pais1);
+
                 mostrar_tablero(tablero_flota1);
             }
             else
             {
                 if (n_jugadores == 2)
                 {
-                    escoger_pais(pais2);
+
                     mostrar_tablero(tablero_flota2);
                 }
                 else
@@ -613,7 +619,10 @@ int eliminar_buque(int tipo, int jugador)
  █   █ █    █ █   █ █    █  █   
  █   █  ████  ████   ████   █   
 Funciones relacionadas al las jugadas de la computadora*/
-
+int pc_escoge_pais()
+{
+    return 0;
+}
 int robot_posiciona()
 {
     int n_proas;
@@ -829,8 +838,9 @@ int juega(int turno)
             if (numero_de_jugadores == 2)
             {
                 mostrar_estadisticas(2);
-                mostrar_preparado_jugador(turno);
                 mostrar_tableros(tablero_flota2, tablero_ataque2);
+                printf("\n Indique coordenadas para atacar: ");
+
                 do
                 {
                     suma = filtro_scanf_posicion();
@@ -839,7 +849,7 @@ int juega(int turno)
 
                 } while (repitio_disparo(tablero_ataque2, j, i, 2) != 0);
 
-                acerto = lanzamiento_jugador(j, i, tablero_ataque1, tablero_flota2, 1);
+                acerto = lanzamiento_jugador(j, i, tablero_ataque2, tablero_flota1, 1);
                 n_disparos2++;
                 coord_int_char(j, i, ult_celda2);
 
@@ -1003,17 +1013,31 @@ int mostrar_estadisticas(int jugador)
 int escoger_pais(char *pais)
 {
     int num;
+    int len;
+    char zero = '0';
     printf("Paises:");
     for (int i = 0; i < 23; i++)
     {
-        print("\n %d : %s.", i+1, paises[i]);
+        printf("\n%d : %s", i + 1, paises[i]);
+        len = ubicar_caracter(paises[i], '\0');
+        i++;
+        if (i < 23)
+        {
+            if (i > 9)
+                len++;
+            for (int j = 0; j < 30 - len; j++)
+            {
+                printf(" ");
+            }
+            printf("%d : %s", i + 1, paises[i]);
+        }
     }
     printf("\n> Escoja un pais: ");
     num = filtro_scanf(23);
-    num = num <= 0 ? 1:num;
+    num = num <= 0 ? 1 : num;
     num--;
     strcpy(pais, paises[num]);
-    
+
     return 0;
 }
 
@@ -1136,11 +1160,12 @@ int pantalla_ganador(int ganador)
     else if (ganador == 2)
         printf("\nGano la computadora. Las maquinas somos mejores. MUAJAJAJA.", ganador);
     mostrar_estadisticas(ganador);
-        printf("\nDesea guardar un registro de la partida?");
-        printf("\nSi (1) No (2)");
-        if (filtro_scanf(2)==1){
-            exportar_registro();
-        }
+    printf("\nDesea guardar un registro de la partida?");
+    printf("\nSi (1) No (2)");
+    if (filtro_scanf(2) == 1)
+    {
+        exportar_registro();
+    }
 
     return 0;
 }
