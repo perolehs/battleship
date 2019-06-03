@@ -1,0 +1,15 @@
+M
+J1
+Estados Unidos
+Portaaviones,C1,G1
+Acorazado,C9,F9
+Crucero,B4,B6
+Submarino,G5,I5
+Destructor,I10,J10
+J2
+Japon
+Portaaviones,F1,J1
+Acorazado,G4,G7
+Crucero,C9,E9
+Submarino,H9,J9
+Destructor,B4,C4

@@ -1,4 +1,4 @@
-U
+M
 J1
 Francia
 Portaaviones,A4,A8
@@ -6,3 +6,10 @@ Acorazado,E3,H3
 Crucero,J1,J3
 Submarino,H8,J8
 Destructor,F8,F9
+J2
+Canada
+Portaaviones,F4,F8
+Acorazado,J1,J4
+Crucero,A1,A3
+Submarino,H10,J10
+Destructor,B8,B9

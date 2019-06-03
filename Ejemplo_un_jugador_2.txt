@@ -1,0 +1,8 @@
+U
+J1
+Australia
+Portaaviones,B4,B8
+Acorazado,D3,D6
+Crucero,B10,D10
+Submarino,A1,A3
+Destructor,J1,J2
