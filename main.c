@@ -1,5 +1,4 @@
 //TODO Al destruir un barco que lo muestre en pantalla.
-//TODO "q" para salirse.
 //TODO opcion de reasignar un barco.
 //TODO documentar funciones.
 //TODO quitar fprints innecesarias.
@@ -52,6 +51,7 @@ int pantalla_inicial();
 int pantalla_numero_de_jugadores();
 int mostrar_preparado_jugador(int jugador);
 int limpiar();
+int salir_q();
 int filtro_scanf(int max);
 int nadie_gano();
 int juega(int turno);
@@ -223,21 +223,23 @@ int lector_de_archivo()
 
                 hj = ctoi(linea[len_linea + 1]) - 97;
                 hi = atoi(&linea[len_linea + 2]) - 1;
-                if (linea[len_linea + 3] != ','){
+                if (linea[len_linea + 3] != ',')
+                {
                     hi = 9;
                     zero_jump++;
                 }
                 bj = ctoi(linea[len_linea + 4 + zero_jump]) - 97;
                 bi = atoi(&linea[len_linea + 5 + zero_jump]) - 1;
-                if (linea[len_linea + 6 + zero_jump] == '0'){
+                if (linea[len_linea + 6 + zero_jump] == '0')
+                {
                     bi = 9;
-                    zero_jump = 0;    
+                    zero_jump = 0;
                 }
 
                 while (!crear_buque(hj, hi, bj, bi, tipo, jugador))
                 {
                     limpiar();
-                    printf("\n*** Coordenadas %c%d, %c%d invalidas para buque de largo (%d). ***\n", hj+97,hi+1,bj+97,bi+1, tipo);
+                    printf("\n*** Coordenadas %c%d, %c%d invalidas para buque de largo (%d). ***\n", hj + 97, hi + 1, bj + 97, bi + 1, tipo);
 
                     if (jugador == 1)
                     {
@@ -267,7 +269,7 @@ int lector_de_archivo()
                     {
                         do
                         {
-                            printf("%d %d", n_barcos1,n_barcos2);
+                            printf("%d %d", n_barcos1, n_barcos2);
                             printf("\n Indique la coordenada de la POPA del barco %s (%d)\n", barcos[tipo - 1], tipo);
 
                             cola = filtro_scanf_posicion();
@@ -308,13 +310,13 @@ int exportar_registro()
     FILE *archivo;
     archivo = fopen("registro.txt", "wt");
     int i = 0;
-    while (i < n_disparos1+n_disparos2)
+    while (i < n_disparos1 + n_disparos2)
     {
-        fputs(registro_jugadas[i],archivo);
-        fputs("\n",archivo);
+        fputs(registro_jugadas[i], archivo);
+        fputs("\n", archivo);
         i++;
     }
-    
+
     fclose(archivo);
     return 0;
 }
@@ -322,14 +324,15 @@ int exportar_registro()
 /**
  * Guarda las coordenadas en el array de registro.
  **/
-int guardar_registro(int j, int i, int jugador){
+int guardar_registro(int j, int i, int jugador)
+{
     char registro[10] = "";
-    char coord[4]="";
+    char coord[4] = "";
     strcpy(registro, jugador == 0 ? "PC (" : jugador == 1 ? "J1 (" : "J2 (");
-    coord_int_char(j,i,coord);
+    coord_int_char(j, i, coord);
     strcat(registro, coord);
     strcat(registro, ")");
-    strcpy(registro_jugadas[n_disparos1+n_disparos2], registro);
+    strcpy(registro_jugadas[n_disparos1 + n_disparos2], registro);
     return 0;
 }
 
@@ -355,7 +358,7 @@ int cargar_tableros()
     printf("    Presione una tecla para continuar. ");
     lector_de_archivo();
     fflush(stdin);
-    getchar();
+    salir_q();
     return 0;
 }
 
@@ -439,7 +442,7 @@ int posicionar_barcos(int n_jugadores)
             }
 
             tipo = 5 - i; // para empezar desde el portaaviones (5);
-            printf("\n\n Indique la coordenada de la PROA del barco %s (%d): ", barcos[tipo - 1], tipo < 3 ? tipo+1:tipo);
+            printf("\n\n Indique la coordenada de la PROA del barco %s (%d): ", barcos[tipo - 1], tipo < 3 ? tipo + 1 : tipo);
 
             do
             {
@@ -457,18 +460,18 @@ int posicionar_barcos(int n_jugadores)
             // }
             // else
             // {
-                do
-                {
-                    printf("\n Indique la coordenada de la POPA del barco %s (%d): ", barcos[tipo - 1], tipo < 3 ? tipo+1:tipo);
+            do
+            {
+                printf("\n Indique la coordenada de la POPA del barco %s (%d): ", barcos[tipo - 1], tipo < 3 ? tipo + 1 : tipo);
 
-                    cola = filtro_scanf_posicion();
+                cola = filtro_scanf_posicion();
 
-                    bi = cola % 10;
-                    bj = (cola - cola % 10) / 10;
-                    if (validar_posicion_barco(hj, hi, bj, bi, tipo, jugador) != 0 && barcos_alrededos(bj, bi, tipo, jugador) != 0)
-                        break;
-                } while (1);
-                crear_buque(hj, hi, bj, bi, tipo, jugador);
+                bi = cola % 10;
+                bj = (cola - cola % 10) / 10;
+                if (validar_posicion_barco(hj, hi, bj, bi, tipo, jugador) != 0 && barcos_alrededos(bj, bi, tipo, jugador) != 0)
+                    break;
+            } while (1);
+            crear_buque(hj, hi, bj, bi, tipo, jugador);
             // }
         }
 
@@ -485,7 +488,7 @@ int posicionar_barcos(int n_jugadores)
         }
         printf("\n\nPresione una tecla para continuar.");
         fflush(stdin);
-        getchar();
+        salir_q();
 
         if (n_jugadores == 1)
         {
@@ -502,17 +505,17 @@ int crear_buque(int hj, int hi, int bj, int bi, int tipo, int jugador)
 {
     // printf("\n creando buque: (%d %d), (%d %d).", hj, hi, bj, bi);
     int j, i;
-    int init,tipo_;
+    int init, tipo_;
     char number[20];
 
     //vemos si es horizontal o vertical
     int posicion = validar_posicion_barco(hj, hi, bj, bi, tipo, jugador);
     tipo_ = tipo;
-    tipo = tipo < 3 ? tipo+1 : tipo;
+    tipo = tipo < 3 ? tipo + 1 : tipo;
     //!test------
     // printf("\nEn crearbuque la posicion es: %d, tipo: %d, hj=%d, hi=%d, bj=%d, bi=%d", posicion, tipo, hj, hi, bj, bi);
-    // getchar();
-    // getchar();
+    // salir_q();
+    // salir_q();
     //!-----------
 
     switch (posicion)
@@ -529,8 +532,8 @@ int crear_buque(int hj, int hi, int bj, int bi, int tipo, int jugador)
 
             //!test------
             // printf("tablero flota en %d %d = %s", hj, i, tablero_flota1[hj + init][i]);
-            // getchar();
-            // getchar();
+            // salir_q();
+            // salir_q();
             //!---------
         }
         break;
@@ -547,8 +550,8 @@ int crear_buque(int hj, int hi, int bj, int bi, int tipo, int jugador)
 
             //!test------
             // printf("tablero flota en %d %d = %s", hj, i, tablero_flota1[i][hi + init]);
-            // getchar();
-            // getchar();
+            // salir_q();
+            // salir_q();
             //!-----------
         }
         break;
@@ -563,7 +566,7 @@ int validar_posicion_barco(int cabeza_j, int cabeza_i, int cola_j, int cola_i, i
     // if (tipo == 1)
     //     return 1;
     int menor;
-    tipo = tipo < 3 ? tipo+1 : tipo;
+    tipo = tipo < 3 ? tipo + 1 : tipo;
 
     //!test------
     // printf("\n en validar posicion %d %d %d %d %d", cabeza_j, cabeza_i, cola_j, cola_i, tipo);
@@ -731,7 +734,7 @@ int robot_posiciona()
         limpiar();
         mostrar_tablero(tablero_flota2);
         fflush(stdin);
-        getchar();
+        salir_q();
     }
 }
 
@@ -759,7 +762,7 @@ int popas_posibles(int hj, int hi, int tipo, int jugador, int (*popas_validas)[2
     int i;
     int validos = 0;
     int tipo_ = 0;
-    tipo_ = tipo < 3 ? tipo+1 : tipo;
+    tipo_ = tipo < 3 ? tipo + 1 : tipo;
 
     int popas[4][2] = {{hj - abs(tipo_ - 1), hi},  //arriba
                        {hj, hi + tipo_ - 1},       //derecha
@@ -813,7 +816,7 @@ int lanzamiento_pc()
         j = (suma - i) / 10;
 
     } while (repitio_disparo(tablero_ataque2, j, i, 2) != 0);
-    guardar_registro(j,i,0);
+    guardar_registro(j, i, 0);
     return lanzamiento_jugador(j, i, tablero_ataque2, tablero_flota1, 1);
 }
 
@@ -833,7 +836,7 @@ int juega(int turno)
     int suma;
 
     limpiar();
-    limpiar();
+
     if (turno == 2 && numero_de_jugadores == 1)
     {
         printf("\n\n\n\n          ######################################\n");
@@ -841,7 +844,7 @@ int juega(int turno)
         printf("          # Presione una tecla para continuar. #\n");
         printf("          ######################################");
         fflush(stdin);
-        getchar();
+        salir_q();
     }
     else if (numero_de_jugadores == 2)
         mostrar_preparado_jugador(turno);
@@ -861,7 +864,7 @@ int juega(int turno)
         {
             mostrar_estadisticas(1);
             mostrar_tableros(tablero_flota1, tablero_ataque1);
-            printf("%d %d", n_barcos1,n_barcos2);
+            printf("%d %d", n_barcos1, n_barcos2);
             printf("\n> Indique coordenadas para atacar: ");
 
             do
@@ -871,7 +874,7 @@ int juega(int turno)
                 j = (suma - i) / 10;
 
             } while (repitio_disparo(tablero_ataque1, j, i, 2) != 0);
-            guardar_registro(j,i,1);
+            guardar_registro(j, i, 1);
             acerto = lanzamiento_jugador(j, i, tablero_ataque1, tablero_flota2, 2);
             n_disparos1++;
             coord_int_char(j, i, ult_celda1);
@@ -883,7 +886,7 @@ int juega(int turno)
                 mostrar_tableros(tablero_flota1, tablero_ataque1);
                 printf("\nFin del turno. Aprete una tecla para continuar.");
                 fflush(stdin);
-                getchar();
+                salir_q();
             }
         }
         else
@@ -892,7 +895,7 @@ int juega(int turno)
             {
                 mostrar_estadisticas(2);
                 mostrar_tableros(tablero_flota2, tablero_ataque2);
-                printf("%d %d", n_barcos1,n_barcos2);
+                printf("%d %d", n_barcos1, n_barcos2);
                 printf("\n Indique coordenadas para atacar: ");
 
                 do
@@ -902,7 +905,7 @@ int juega(int turno)
                     j = (suma - i) / 10;
 
                 } while (repitio_disparo(tablero_ataque2, j, i, 2) != 0);
-                guardar_registro(j,i,2);
+                guardar_registro(j, i, 2);
 
                 acerto = lanzamiento_jugador(j, i, tablero_ataque2, tablero_flota1, 1);
                 n_disparos2++;
@@ -915,7 +918,7 @@ int juega(int turno)
                     mostrar_tableros(tablero_flota2, tablero_ataque2);
                     printf("\nFin del turno. Aprete una tecla para continuar.");
                     fflush(stdin);
-                    getchar();
+                    salir_q();
                 }
             }
             else
@@ -1012,7 +1015,7 @@ int nadie_gano()
 {
     // printf("n_barcos1: %d, n_barcos2: %d", n_barcos1, n_barcos2);
     // fflush(stdin);
-    // getchar();
+    // salir_q();
     if (n_barcos1 >= 54332)
         return 2;
     else if (n_barcos2 >= 54332)
@@ -1035,6 +1038,8 @@ int mostrar_estadisticas(int jugador)
     int n_disparos;
     int n_barcos_destruidos = 0;
     int n_barcos_muertos = 0;
+    int recien_destruido = 0;
+    int recien_muerto_muertos = 0;
 
     n_barcos_enemigos = (jugador == 1) ? n_barcos2 : n_barcos1;
     n_barcos_propios = (jugador == 1) ? n_barcos1 : n_barcos2;
@@ -1046,15 +1051,11 @@ int mostrar_estadisticas(int jugador)
     n_barcos_destruidos += (n_barcos_enemigos % 10000 >= 4000) ? 1 : 0;
     n_barcos_destruidos += (n_barcos_enemigos >= 50000) ? 1 : 0;
 
-    // printf("%d %d %d %d ", n_barcos_destruidos, n_barcos_muertos, n_barcos_enemigos, n_barcos_propios);
-    // printf("%d %d %d %d ",  n_barcos2, n_barcos1, n_barcos_enemigos, n_barcos_propios );
-
     n_barcos_muertos += n_barcos_propios % 10 == 2 ? 1 : 0;
     n_barcos_muertos += n_barcos_propios % 100 >= 30 ? 1 : 0;
     n_barcos_muertos += n_barcos_propios % 1000 >= 300 ? 1 : 0;
     n_barcos_muertos += n_barcos_propios % 10000 >= 4000 ? 1 : 0;
     n_barcos_muertos += n_barcos_propios >= 50000 ? 1 : 0;
-    // printf("ene %d pro %d ", n_barcos_enemigos, n_barcos_propios);
 
     printf("Haz destruido %d barcos. Te han destruido %d barcos. Haz atacado %d veces. ", n_barcos_destruidos, n_barcos_muertos, n_disparos);
     if (jugador == 1 && ult_celda1[0] != ' ')
@@ -1166,9 +1167,9 @@ int pantalla_inicial()
     printf("\n<-------------------------------------------Resolucion minima 120 caracteres---------------------------------------->\n");
     //OPCIONES
     printf("\n1 Crear un juego");
-
     printf("\n2 Cargar un juego");
     printf("\n3 Salir del juego");
+    printf("\n\n  Puede apretar 'q' en cualquier momento para salir.");
     printf("\n> Selecione una opcion: ");
 }
 
@@ -1199,7 +1200,7 @@ int mostrar_preparado_jugador(int jugador)
     printf("          # Presione una tecla para continuar. #\n");
     printf("          ######################################");
     fflush(stdin);
-    getchar();
+    salir_q();
 }
 
 int pantalla_ganador(int ganador)
@@ -1232,7 +1233,6 @@ int limpiar()
 {
     system("cls");
     // system("clear");
-
 }
 
 /*
@@ -1243,10 +1243,39 @@ int limpiar()
  ████   ████ █   █ █   ██ 
 Funciones de toma de decisiones a partir de scanf*/
 
+int salir_q()
+{
+    int q, x;
+    x = getchar();
+    if (x == 'q')
+    {
+        printf("\nAprete 'y' para salir. Cualquier otro para continuar.");
+        fflush(stdin);
+        x = salir_q();
+        if (x == 'y')
+            exit(0);
+    }
+}
+
 int filtro_scanf(int max)
 {
+    char x;
     int numero;
-    int orden = scanf("%d", &numero);
+    int orden = scanf("%c", &x);
+    // printf("%d %d", x, orden);
+    if (x == 'q')
+    {
+        printf("\nAprete 'y' para salir. Cualquier otro para continuar.");
+        fflush(stdin);
+        x = getchar();
+        if (x == 'y')
+            exit(0);
+    } else
+    {
+        numero = ctoi(x)-48;
+    }
+    
+
     while (orden == 0 || numero > max || numero < 0)
     {
         printf("Debe seleccionar una opcion Valida: ");
@@ -1262,9 +1291,18 @@ int filtro_scanf(int max)
 int filtro_scanf_posicion()
 {
     char posicion[3];
-    int j, i;
+    int j, i, x;
 
     int orden = scanf("%s", &posicion);
+    // printf("%s", posicion);
+    if (posicion[0] == 'q')
+    {
+        printf("\nAprete 'y' para salir. Cualquier otro para continuar.");
+        fflush(stdin);
+        x = getchar();
+        if (x == 'y')
+            exit(0);
+    }
 
     while (orden == 0 || !validar_coordenadas(posicion))
     {
