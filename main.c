@@ -1,5 +1,3 @@
-//TODO Al destruir un barco que lo muestre en pantalla.
-//TODO opcion de reasignar un barco.
 //TODO documentar funciones.
 //TODO quitar fprints innecesarias.
 //TODO probar en linux.
@@ -19,19 +17,20 @@
  ╚═════╝ ╚══════╝ ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚══════╝
 */
 
+
 int validar_posicion_barco(int cabeza_j, int cabeza_i,
                            int cola_i, int cola_j,
                            int tipo, int jugador); // Verifica si los datos introducidos por el usuario son válidos.
 int crear_buque(int hj, int hi, int bj,
-                int bi, int tipo, int jugador); // Función para añadir buques.
-int lector_de_archivo();                        // Lector para el archivo a pasar si se desea cargar un juego.
-int ubicar_caracter(char *string_, char caracter);
+                int bi, int tipo, int jugador);                                // Función para añadir buques.
+int lector_de_archivo();                                                       // Lector para el archivo a pasar si se desea cargar un juego.
 int eliminar_buque(int tipo, int jugador);                                     // Función para eliminar buques.
 int acerto_disparo(char (*tablero_ataque)[10][5], int j, int i);               // Función para determinar si el disparo es un fallo, un acierto..
 int lanzamiento_pc();                                                          //Función para calcular aleatoriamente el lanzamiento de la computadora.
 int repitio_disparo(char (*tablero_ataque)[10][5], int j, int i, int jugador); // Función para determinar si el disparo ya fue hecho.
 int exportar_registro();                                                       // Función para exportar el registro de un juego a un archivo.
 
+int ubicar_caracter(char *string_, char caracter);
 int guardar_registro(int j, int i, int jugador);
 int pc_escoge_pais();
 int iniciar_tableros();
@@ -107,9 +106,11 @@ int main()
         break;
 
     case 2: // Carga un juego
+
         iniciar_tableros();
 
         cargar_tableros();
+
         break;
 
     case 3: // EXIT
@@ -411,9 +412,17 @@ int posicionar_barcos(int n_jugadores)
 
     for (int jugador = 1; jugador < 3; jugador++)
     {
+        if (n_jugadores == 1 && jugador == 2)
+        {
+            pc_escoge_pais();
+            robot_posiciona();
+            break;
+        }
+
         limpiar();
         mostrar_preparado_jugador(jugador);
         limpiar();
+
         if (jugador == 1)
             escoger_pais(pais1);
         else if (numero_de_jugadores == 2)
@@ -425,19 +434,13 @@ int posicionar_barcos(int n_jugadores)
 
             if (jugador == 1)
             {
-
                 mostrar_tablero(tablero_flota1);
             }
             else
             {
                 if (n_jugadores == 2)
                 {
-
                     mostrar_tablero(tablero_flota2);
-                }
-                else
-                {
-                    pc_escoge_pais();
                 }
             }
 
@@ -453,13 +456,6 @@ int posicionar_barcos(int n_jugadores)
                     break;
             } while (1);
 
-            //Si el barco es de 1
-            // if (tipo == 1 )
-            // {
-            //     crear_buque(hj, hi, hj, hi, tipo, jugador);
-            // }
-            // else
-            // {
             do
             {
                 printf("\n Indique la coordenada de la POPA del barco %s (%d): ", barcos[tipo - 1], tipo < 3 ? tipo + 1 : tipo);
@@ -472,7 +468,6 @@ int posicionar_barcos(int n_jugadores)
                     break;
             } while (1);
             crear_buque(hj, hi, bj, bi, tipo, jugador);
-            // }
         }
 
         limpiar();
@@ -480,21 +475,46 @@ int posicionar_barcos(int n_jugadores)
         if (jugador == 1)
         {
             mostrar_tablero(tablero_flota1);
+
+            printf("\n\n¿Quiere reposicionar sus barcos?\n 1 - Si \n 2 - No\n");
+
+            if (filtro_scanf(2) == 1)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    for (int j = 0; j < 10; j++)
+                    {
+                        strcpy(tablero_ataque1[i][j], "__");
+                        strcpy(tablero_flota1[i][j], "__");
+                    }
+                }
+                jugador--;
+            }
         }
         else
         {
             if (n_jugadores == 2)
+            {
                 mostrar_tablero(tablero_flota2);
-        }
-        printf("\n\nPresione una tecla para continuar.");
-        fflush(stdin);
-        salir_q();
+                printf("\n\n¿Quiere reposicionar sus barcos?\n 1 - Si \n 2 - No\n");
 
-        if (n_jugadores == 1)
-        {
-            robot_posiciona();
-            break;
+                if (filtro_scanf(2) == 1)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        for (int j = 0; j < 10; j++)
+                        {
+                            strcpy(tablero_ataque2[i][j], "__");
+                            strcpy(tablero_flota2[i][j], "__");
+                        }
+                    }
+                    jugador--;
+                }
+            }
         }
+
+        // fflush(stdin);
+        // salir_q();
     }
 }
 
@@ -864,7 +884,7 @@ int juega(int turno)
         {
             mostrar_estadisticas(1);
             mostrar_tableros(tablero_flota1, tablero_ataque1);
-            printf("%d %d", n_barcos1, n_barcos2);
+            // printf("%d %d", n_barcos1, n_barcos2);
             printf("\n> Indique coordenadas para atacar: ");
 
             do
@@ -895,7 +915,7 @@ int juega(int turno)
             {
                 mostrar_estadisticas(2);
                 mostrar_tableros(tablero_flota2, tablero_ataque2);
-                printf("%d %d", n_barcos1, n_barcos2);
+                // printf("%d %d", n_barcos1, n_barcos2);
                 printf("\n Indique coordenadas para atacar: ");
 
                 do
@@ -1270,11 +1290,11 @@ int filtro_scanf(int max)
         x = getchar();
         if (x == 'y')
             exit(0);
-    } else
-    {
-        numero = ctoi(x)-48;
     }
-    
+    else
+    {
+        numero = ctoi(x) - 48;
+    }
 
     while (orden == 0 || numero > max || numero < 0)
     {
